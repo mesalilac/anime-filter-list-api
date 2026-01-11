@@ -2,12 +2,19 @@ from typing import Union
 
 from fastapi import FastAPI
 
+from .scrape import get_shows_list
+
 app = FastAPI()
 
 
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
+
+
+@app.get("/shows")
+def get_shows():
+    return get_shows_list()
 
 
 @app.get("/items/{item_id}")
