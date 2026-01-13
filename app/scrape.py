@@ -33,8 +33,3 @@ def get_shows_list() -> list[ShowModel]:
         results.append(ShowModel(name=name, title=title, url=BASE_URL + url))
 
     return results
-
-
-# if __name__ == "__main__":
-# for x in get_shows_list():
-#     print(x.name)
