@@ -43,7 +43,3 @@ class ShowModel(BaseModel):
     name: str
     title: str
     url: str
-
-
-class ShowsListResponseModel(BaseModel):
-    shows: list[ShowModel]
