@@ -40,7 +40,7 @@ async def get_show(slug: str):
 
 
 @app.get("/shows")
-def get_shows():
+async def get_shows():
     global shows_list_cache
     current_time = int(time.time())
 
