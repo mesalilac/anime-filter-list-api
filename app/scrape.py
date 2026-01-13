@@ -2,7 +2,7 @@
 
 import requests
 
-from .models import ShowModel
+from app.models import ShowModel
 from bs4 import BeautifulSoup
 
 BASE_URL = "https://animefillerlist.com"
