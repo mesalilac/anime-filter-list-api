@@ -2,7 +2,12 @@ import time
 import httpx
 import json
 
-from app.models import ShowResponseCacheModel, ShowsListResponseCacheModel
+from app.models import (
+    ShowModel,
+    ShowResponseModel,
+    ShowResponseCacheModel,
+    ShowsListResponseCacheModel,
+)
 from fastapi import FastAPI, APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
 from app.scrape import get_shows_list, get_show_by_slug
@@ -47,7 +52,11 @@ async def redirect_to_docs():
     return RedirectResponse(url=API_DOCS_URL, status_code=301)
 
 
-@router.get("/")
+@router.get(
+    "/",
+    summary="Fetch all shows listed on animefillerlist.com",
+    response_model=list[ShowModel],
+)
 async def get_shows():
     global shows_list_cache
     client: httpx.AsyncClient = app.state.httpx_client
@@ -69,7 +78,11 @@ async def get_shows():
     return new_data
 
 
-@router.get("/{slug_or_id}")
+@router.get(
+    "/{slug_or_id}",
+    summary="Fetch a show using animefillerlist.com's slug or MAL ID",
+    response_model=ShowResponseModel,
+)
 async def get_show(slug_or_id: str):
     client: httpx.AsyncClient = app.state.httpx_client
 
