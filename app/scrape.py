@@ -1,6 +1,7 @@
 """Scrape data from `animefillerlist.com`"""
 
 import httpx
+from urllib.parse import urljoin
 
 from datetime import datetime, timezone
 from typing import TypeGuard
@@ -8,7 +9,7 @@ from app.models import ShowModel, ShowResponseModel, EpisodeModel, InfoModel, Gr
 from bs4 import BeautifulSoup, element
 
 BASE_URL = "https://animefillerlist.com"
-SHOWS_BASE_URL = BASE_URL + "/" + "shows"
+SHOWS_BASE_URL = urljoin(BASE_URL, "shows/")
 
 
 def is_tag(ele: element.Tag | element.NavigableString | None) -> TypeGuard[element.Tag]:
@@ -39,7 +40,8 @@ async def get_show_by_slug(slug: str) -> ShowResponseModel | None:
 
     episodes_list: list[EpisodeModel] = []
 
-    url = SHOWS_BASE_URL + "/" + slug
+    url = urljoin(SHOWS_BASE_URL, slug)
+    print(url)
 
     async with httpx.AsyncClient() as client:
         try:
@@ -94,7 +96,7 @@ async def get_show_by_slug(slug: str) -> ShowResponseModel | None:
                 ep_number = int(tr.find("td", {"class": "Number"}).get_text())
                 title_a = tr.find("td", {"class": "Title"}).find("a")
                 title = title_a.get_text()
-                ep_url = BASE_URL + title_a["href"]
+                ep_url = urljoin(BASE_URL, title_a["href"])
 
                 ep_type = tr.find("td", {"class": "Type"}).find("span").get_text()
                 ep_date = tr.find("td", {"class": "Date"}).get_text()
@@ -172,6 +174,6 @@ async def get_shows_list() -> list[ShowModel]:
         title = link.get_text()
         name = url.split("/")[-1]
 
-        results.append(ShowModel(name=name, title=title, url=BASE_URL + url))
+        results.append(ShowModel(name=name, title=title, url=urljoin(BASE_URL, url)))
 
     return results
