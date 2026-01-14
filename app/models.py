@@ -3,7 +3,7 @@ from enum import Enum
 
 
 class InfoModel(BaseModel):
-    show_name: str
+    slug: str
     total_episodes: int
     total_fillers: int
     last_episode_aired_at: int

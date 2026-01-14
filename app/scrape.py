@@ -128,7 +128,7 @@ async def get_show_by_slug(
         last_updated_at = int(dt.timestamp())
 
     info_model = InfoModel(
-        show_name=slug,
+        slug=slug,
         total_episodes=len(episodes_list),
         total_fillers=len(filler_episodes_list),
         last_episode_aired_at=episodes_list[-1].aired_at,
