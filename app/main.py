@@ -3,6 +3,7 @@ import httpx
 import json
 
 from app.models import (
+    Message,
     ShowModel,
     ShowResponseModel,
     ShowResponseCacheModel,
@@ -56,6 +57,13 @@ async def redirect_to_docs():
     "/",
     summary="Fetch all shows listed on animefillerlist.com",
     response_model=list[ShowModel],
+    responses={
+        404: {"model": Message, "description": "Failed to find Shows list"},
+        502: {
+            "model": Message,
+            "description": "Failed to connect to animefillerlist.com or failed to parse document",
+        },
+    },
 )
 async def get_shows():
     global shows_list_cache
@@ -82,6 +90,13 @@ async def get_shows():
     "/{slug_or_id}",
     summary="Fetch a show using animefillerlist.com's slug or MAL ID",
     response_model=ShowResponseModel,
+    responses={
+        404: {"model": Message, "description": "Wrong MAL ID or slug"},
+        502: {
+            "model": Message,
+            "description": "Failed to connect to animefillerlist.com or failed to parse document",
+        },
+    },
 )
 async def get_show(slug_or_id: str):
     client: httpx.AsyncClient = app.state.httpx_client

@@ -58,3 +58,7 @@ class ShowResponseCacheModel(BaseModel):
 class ShowsListResponseCacheModel(BaseModel):
     data: list[ShowModel]
     last_updated_at: int
+
+
+class Message(BaseModel):
+    detail: str
