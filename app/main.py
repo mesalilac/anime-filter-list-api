@@ -103,7 +103,9 @@ async def get_show(slug_or_id: str):
     new_data = await get_show_by_slug(client, slug, slug_to_mal_mapping)
 
     if new_data is None:
-        raise HTTPException(status_code=404, detail="Show not found!")
+        raise HTTPException(
+            status_code=404, detail="Failed to find Show with this slug"
+        )
 
     show_cache[slug] = ShowResponseCacheModel(
         data=new_data, last_updated_at=current_time

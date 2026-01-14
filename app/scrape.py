@@ -5,6 +5,7 @@ from urllib.parse import urljoin
 
 from datetime import datetime, timezone
 from typing import TypeGuard
+from fastapi import HTTPException
 from app.models import ShowModel, ShowResponseModel, EpisodeModel, InfoModel, GroupModel
 from bs4 import BeautifulSoup, element
 
@@ -53,7 +54,7 @@ async def get_show_by_slug(
         if res.status_code != 200:
             return None
     except httpx.RequestError:
-        return None
+        raise HTTPException(status_code=502, detail=f"Failed to connect to {BASE_URL}")
 
     html = res.content
 
@@ -61,7 +62,10 @@ async def get_show_by_slug(
     condensed_div = soup.find("div", {"id": "Condensed"})
 
     if not is_tag(condensed_div):
-        return None
+        raise HTTPException(
+            status_code=502,
+            detail="Failed to parse html: couldn't find div with id 'Condensed'",
+        )
 
     manga_canon_div = condensed_div.find("div", {"class": "manga_canon"})
 
@@ -182,9 +186,9 @@ async def get_shows_list(
     try:
         res = await client.get(SHOWS_BASE_URL, follow_redirects=True)
         if res.status_code != 200:
-            return results
+            raise HTTPException(status_code=404, detail="Failed to find Shows list")
     except httpx.RequestError:
-        return results
+        raise HTTPException(status_code=502, detail=f"Failed to connect to {BASE_URL}")
 
     html = res.content
 
@@ -193,7 +197,10 @@ async def get_shows_list(
     show_list_div = soup.find("div", {"id": "ShowList"})
 
     if not is_tag(show_list_div):
-        return results
+        raise HTTPException(
+            status_code=502,
+            detail="Failed to parse html: couldn't find div with id 'ShowList'",
+        )
 
     links_list = show_list_div.find_all("a")
 
