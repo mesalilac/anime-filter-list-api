@@ -1,6 +1,6 @@
 """Scrape data from `animefillerlist.com`"""
 
-import requests
+import httpx
 
 from datetime import datetime, timezone
 from typing import TypeGuard
@@ -31,14 +31,7 @@ def expand_ranges(range_strings: list[str]) -> list[int]:
     return expanded_list
 
 
-def get_show_by_slug(slug: str) -> ShowResponseModel | None:
-    """None means 404 error"""
-
-    # InfoModel
-    # GroupModel
-    # EpisodeModel
-    # ShowResponseModel
-
+async def get_show_by_slug(slug: str) -> ShowResponseModel | None:
     manga_canon_episodes_list: list[int] = []
     mixed_canon_filler_episodes_list: list[int] = []
     filler_episodes_list: list[int] = []
@@ -48,10 +41,13 @@ def get_show_by_slug(slug: str) -> ShowResponseModel | None:
 
     url = SHOWS_BASE_URL + "/" + slug
 
-    res: requests.Response = requests.get(url)
-
-    if res.status_code != 200:
-        return None
+    async with httpx.AsyncClient() as client:
+        try:
+            res = await client.get(url, follow_redirects=True)
+            if res.status_code != 200:
+                return None
+        except httpx.RequestError:
+            return None
 
     html = res.content
 
@@ -152,13 +148,16 @@ def get_show_by_slug(slug: str) -> ShowResponseModel | None:
     return show_response_model
 
 
-def get_shows_list() -> list[ShowModel]:
+async def get_shows_list() -> list[ShowModel]:
     results: list[ShowModel] = []
 
-    res: requests.Response = requests.get(SHOWS_BASE_URL)
-
-    if res.status_code != 200:
-        return results
+    async with httpx.AsyncClient() as client:
+        try:
+            res = await client.get(SHOWS_BASE_URL, follow_redirects=True)
+            if res.status_code != 200:
+                return results
+        except httpx.RequestError:
+            return results
 
     html = res.content
 

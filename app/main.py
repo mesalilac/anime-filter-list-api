@@ -28,7 +28,7 @@ async def get_show(slug: str):
     if cached_item and current_time - cached_item.last_updated_at < SHOW_CACHE_TTL:
         return cached_item.data
 
-    new_data = get_show_by_slug(slug)
+    new_data = await get_show_by_slug(slug)
 
     if new_data is None:
         raise HTTPException(status_code=404, detail="Show not found!")
@@ -51,7 +51,7 @@ async def get_shows():
     ):
         return shows_list_cache.data
 
-    new_data = get_shows_list()
+    new_data = await get_shows_list()
 
     shows_list_cache = ShowsListResponseCacheModel(
         data=new_data, last_updated_at=current_time
