@@ -41,7 +41,6 @@ async def get_show_by_slug(slug: str) -> ShowResponseModel | None:
     episodes_list: list[EpisodeModel] = []
 
     url = urljoin(SHOWS_BASE_URL, slug)
-    print(url)
 
     async with httpx.AsyncClient() as client:
         try:
