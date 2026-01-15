@@ -1,5 +1,5 @@
 [project]
-name = "anime-filter-list-api"
+name = "animefilterlist-api"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
